@@ -9,7 +9,20 @@
             android:layout_width="wrap_content"
             android:id="@+id/test_btn"
             android:text="@string/test_connection"
-            android:layout_marginBottom="10dp"/>
+            android:layout_marginBottom="20dp"/>
+
+    <TextView
+        android:text="@string/initial_class"
+        android:textSize="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"/>
+
+    <TextView
+        android:id="@+id/initial_class"
+        android:textSize="32dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 
     <TextView
             android:text="@string/connection_class"
