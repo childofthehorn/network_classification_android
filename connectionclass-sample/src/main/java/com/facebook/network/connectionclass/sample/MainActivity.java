@@ -11,9 +11,13 @@
 package com.facebook.network.connectionclass.sample;
 
 import android.app.Activity;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -39,6 +43,7 @@ public class MainActivity extends Activity {
   private String highUrl = "http://wallpaperswide.com/download/star_wars_battlefront_stormtrooper-wallpaper-960x640.jpg";
   private String medUrl = "http://wallpaperswide.com/download/star_wars_battlefront_stormtrooper-wallpaper-480x320.jpg";
   private String lowUrl = "http://wallpaperswide.com/download/star_wars_battlefront_stormtrooper-wallpaper-320x480.jpg";
+    private String tinyUrl = "http://wallpaperswide.com/download/star_wars_battlefront_stormtrooper-wallpaper-220x176.jpg";
   private int mTries = 0;
   private ConnectionQuality mConnectionClass = ConnectionQuality.UNKNOWN;
 
@@ -52,6 +57,8 @@ public class MainActivity extends Activity {
     mTextView = (TextView)findViewById(R.id.connection_class);
     mNetTextView = (TextView)findViewById(R.id.initial_class);
     mTextView.setText(mConnectionClassManager.getCurrentBandwidthQuality().toString());
+      findCurrentNetSpeed();
+      checkInitialQuality();
     mRunningBar = findViewById(R.id.runningBar);
     mRunningBar.setVisibility(View.GONE);
     mListener = new ConnectionChangedListener();
@@ -85,7 +92,7 @@ public class MainActivity extends Activity {
         connectionQuality = "EXCELLENT";
         break;
       default:
-        mURL = " ";
+        mURL = tinyUrl;
         connectionQuality = "POOR";
         break;
     }
@@ -102,6 +109,22 @@ public class MainActivity extends Activity {
     @Override
     public void onBandwidthStateChange(ConnectionQuality bandwidthState) {
       mConnectionClass = bandwidthState;
+        int setConType = 0;
+        switch (bandwidthState.toString()) {
+            case "POOR":
+                setConType = 0;
+                break;
+            case "MODERATE":
+                setConType = 1;
+                break;
+            case "GOOD":
+                setConType = 2;
+                break;
+            case "EXCELLENT":
+                setConType = 3;
+                break;
+        }
+        NetApp.setSpeed(setConType);
       runOnUiThread(new Runnable() {
         @Override
         public void run() {
@@ -158,14 +181,6 @@ public class MainActivity extends Activity {
     protected void onPostExecute(Void v) {
       mDeviceBandwidthSampler.stopSampling();
       // Retry for up to 10 times until we find a ConnectionClass.
-      if(mTries >= 10){
-        runOnUiThread(new Runnable() {
-          @Override
-          public void run() {
-            mTextView.setText("Out of Tries");
-          }
-        });
-      }
       if (mConnectionClass == ConnectionQuality.UNKNOWN && mTries < 10) {
         mTries++;
         new DownloadImage().execute(mURL);
@@ -175,4 +190,71 @@ public class MainActivity extends Activity {
       }
     }
   }
+
+    public int findCurrentNetSpeed() {
+        int networkSpeedClass = 1;
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        int networkType = networkInfo.getType();
+        boolean isWiFi = networkType == ConnectivityManager.TYPE_WIFI;
+        boolean isMobile = networkType == ConnectivityManager.TYPE_MOBILE;
+        boolean isConnected = networkInfo.isConnected();
+        TelephonyManager mTelephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+        if (!isConnected) {
+            networkSpeedClass = 0;
+        }
+
+        // Go full speed when on Wifi
+        if (isConnected && isWiFi) {
+            networkSpeedClass = 3;
+        }
+
+        if (isConnected && isMobile) {
+            String typeString = "Unknown";
+            networkType = mTelephonyManager.getNetworkType();
+            switch (networkType) {
+                case TelephonyManager.NETWORK_TYPE_EDGE:
+                    networkSpeedClass = 1;
+                    break;
+                case TelephonyManager.NETWORK_TYPE_GPRS:
+                    networkSpeedClass = 1;
+                    break;
+                case TelephonyManager.NETWORK_TYPE_UMTS:
+                    networkSpeedClass = 1;
+                    break;
+                case TelephonyManager.NETWORK_TYPE_CDMA:
+                    networkSpeedClass = 1;
+                    break;
+                case TelephonyManager.NETWORK_TYPE_EVDO_0:
+                    networkSpeedClass = 2;
+                    break;
+                case TelephonyManager.NETWORK_TYPE_EVDO_A:
+                    networkSpeedClass = 2;
+                    break;
+                case TelephonyManager.NETWORK_TYPE_EVDO_B:
+                    networkSpeedClass = 2;
+                    break;
+                case TelephonyManager.NETWORK_TYPE_HSDPA:
+                    networkSpeedClass = 2;
+                    break;
+                case TelephonyManager.NETWORK_TYPE_HSPA:
+                    networkSpeedClass = 2;
+                    break;
+                case TelephonyManager.NETWORK_TYPE_EHRPD:
+                    networkSpeedClass = 3;
+                    break;
+                case TelephonyManager.NETWORK_TYPE_HSPAP:
+                    networkSpeedClass = 3;
+                    break;
+                case TelephonyManager.NETWORK_TYPE_LTE:
+                    networkSpeedClass = 3;
+                    break;
+                default:
+                    networkSpeedClass = 2;
+                    break;
+            }
+        }
+        NetApp.setSpeed(networkSpeedClass);
+        return networkSpeedClass;
+    }
 }

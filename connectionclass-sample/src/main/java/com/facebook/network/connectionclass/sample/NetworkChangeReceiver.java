@@ -9,7 +9,7 @@ import android.os.Bundle;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 /**
- * Created by stacy on 10/15/15.
+ * Created by childofthehorn on 1/13/16.
  */
 public class NetworkChangeReceiver extends BroadcastReceiver {
     // This will be a speed of 1-3 with 3 being the highest and 0 meaning nothing
