@@ -6,9 +6,11 @@
  *  LICENSE file in the root directory of this source tree. An additional grant
  *  of patent rights can be found in the PATENTS file in the same directory.
  *
+ *  Modified and added to by Stacy Devino (stacydevino@gmail.com)
+ *
  */
 
-package com.facebook.network.connectionclass.sample;
+package com.stacydevino.network.connectionclass.sample;
 
 import android.app.Activity;
 import android.content.Context;

@@ -10,6 +10,10 @@ import android.telephony.TelephonyManager;
 import android.util.Log;
 /**
  * Created by childofthehorn on 1/13/16.
+ * aka Stacy Devino (stacydevino@gmail.com)
+ *
+ * This file is provided with a GPLv3 lic.
+ * http://www.gnu.org/licenses/gpl-3.0.en.html
  */
 public class NetworkChangeReceiver extends BroadcastReceiver {
     // This will be a speed of 1-3 with 3 being the highest and 0 meaning nothing

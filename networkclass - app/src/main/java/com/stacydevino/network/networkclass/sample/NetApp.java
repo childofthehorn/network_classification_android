@@ -1,15 +1,14 @@
 package com.facebook.network.connectionclass.sample;
 
-import android.app.Application;
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.telephony.TelephonyManager;
 
 /**
  * Created by childofthehorn on 1/13/16.
+ * aka Stacy Devino (stacydevino@gmail.com)
+ *
+ * This file is provided with a GPLv3 lic.
+ * http://www.gnu.org/licenses/gpl-3.0.en.html
  */
-public class NetApp extends Application {
+public class NetApp {
 
     //default this to 1 which is a poor connection.
     public static int networkSpeedClass = 1;
